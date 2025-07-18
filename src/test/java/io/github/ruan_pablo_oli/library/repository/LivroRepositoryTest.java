@@ -36,8 +36,29 @@ class LivroRepositoryTest {
 
 
         livroRepository.save(livro);
+    }
 
 
+    //Salvando o livro com operação de persitência em cascada
+    @Test
+    void salvarLivroCascadeTest(){
+        Livro livro = new Livro();
+        livro.setIsbn("123213-12312");
+        livro.setPreco(BigDecimal.valueOf(150));
+        livro.setGenero(GeneroLivro.FICCAO);
+        livro.setTitulo("A volta dos que não foram!");
+        livro.setDataPublicacao(LocalDate.of(1999,12,5));
+
+        Autor autor = new Autor();
+        autor.setNome("Ruan");
+        autor.setDataNascimento(LocalDate.of(1960,5,25));
+        autor.setNacionalidade("Alemão");
+
+
+        livro.setAutor(autor);
+
+
+        livroRepository.save(livro);
     }
 
 }

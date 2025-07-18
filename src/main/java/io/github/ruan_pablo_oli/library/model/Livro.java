@@ -39,7 +39,7 @@ public class Livro {
     @Column(name = "preco", precision = 18,scale = 2)
     private BigDecimal preco;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL) // Qualquer operação que for feita no livro o autor é puxado em cascada ( Não recomendado para produção)
     @JoinColumn(name = "id_autor")
     private Autor autor;
 
