@@ -125,4 +125,21 @@ public class AutorRepositoryTest {
 
 
 
+    @Test
+    public void listarLivrosAutor(){
+        var id = UUID.fromString("e315d018-fa17-4b9b-bfc0-4b52422ed0bb");
+        var autor = autorRepository.findById(id).orElse(null);
+
+        //Carregar os livros mesmo com a propriedade sendo lazy, ou seja, não é carregada automaticamente junto com o select da entidade
+
+        List<Livro> listaLivros = livroRepository.findByAutor(autor);
+        autor.setLivros(listaLivros);
+
+        autor.getLivros().forEach(System.out::println);
+
+
+    }
+
+
+
 }

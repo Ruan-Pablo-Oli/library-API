@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name="autor", schema = "public")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"livros"})
 public class Autor {
 
     @Id
@@ -31,7 +31,7 @@ public class Autor {
     @Column(name = "nacionalidade",nullable = false,length = 50)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor")
+    @OneToMany(mappedBy = "autor",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     //@Transient ignora a propriedade
     private List<Livro> livros;
 

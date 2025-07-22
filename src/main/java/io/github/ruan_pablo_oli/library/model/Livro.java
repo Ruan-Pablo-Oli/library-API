@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Data // Anotação do lombock que implementa o @Getter para criar getters @Setter para criar setters, @ToString para criar o to string, @EqualsAndHashCode para criar equals and hash code e também o @RequiredArgsConstructor para criar o construtor de atributos Final
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"autor"})
 public class Livro {
 
     @Id
