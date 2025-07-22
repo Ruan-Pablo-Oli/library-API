@@ -14,6 +14,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+
+/**
+ * @see LivroRepositoryTest
+ */
 @SpringBootTest
 class LivroRepositoryTest {
 
@@ -45,16 +49,16 @@ class LivroRepositoryTest {
     @Test
     void salvarLivroCascadeTest() {
         Livro livro = new Livro();
-        livro.setIsbn("123213-12312");
-        livro.setPreco(BigDecimal.valueOf(150));
-        livro.setGenero(GeneroLivro.FICCAO);
-        livro.setTitulo("A volta dos que não foram!");
-        livro.setDataPublicacao(LocalDate.of(1999, 12, 5));
+        livro.setIsbn("123123-434");
+        livro.setPreco(BigDecimal.valueOf(100));
+        livro.setGenero(GeneroLivro.MISTERIO);
+        livro.setTitulo("Casa dos mortos.");
+        livro.setDataPublicacao(LocalDate.of(1960, 6, 6));
 
         Autor autor = new Autor();
-        autor.setNome("Ruan");
-        autor.setDataNascimento(LocalDate.of(1960, 5, 25));
-        autor.setNacionalidade("Alemão");
+        autor.setNome("Rodrigo");
+        autor.setDataNascimento(LocalDate.of(1930, 5, 25));
+        autor.setNacionalidade("Brasileira");
 
 
         livro.setAutor(autor);
@@ -110,5 +114,30 @@ class LivroRepositoryTest {
 
     }
 
+    @Test
+    public void listarLivrosComQueryJPQL(){
+        var resultado = livroRepository.listarTodosOrdenadosPorTitulo();
+        resultado.forEach(System.out::println);
+    }
+
+    @Test
+    public void listarAutoresDosLivros(){
+        var resultado = livroRepository.listarAutoresDosLivros();
+        resultado.forEach(System.out::println);
+    }
+
+    @Test
+    public void listarTituloDiferenteLivros(){
+        var resultado = livroRepository.listarTitulosDiferentesLivros();
+        resultado.forEach(System.out::println);
+
+    }
+
+    @Test
+    public void listarGeneroPorNacionalidadeBrasileira(){
+        var resultado = livroRepository.listarGenerosAutoresBrasileiros();
+        resultado.forEach(System.out::println);
+
+    }
 
 }

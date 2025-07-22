@@ -42,7 +42,7 @@ public class Livro {
     private BigDecimal preco;
 
     @ManyToOne(
-    //        cascade = CascadeType.ALL
+            // cascade = CascadeType.ALL,
              fetch = FetchType.LAZY  // Fala como vai trazer o autor na seleção do livro. Padrão EAGER(Carrega os dados do autor também). Lazy(Não carrega os dados do autor)
     ) // Qualquer operação que for feita no livro o autor é puxado em cascada ( Não recomendado para produção)
     @JoinColumn(name = "id_autor")
