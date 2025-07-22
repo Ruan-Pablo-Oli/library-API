@@ -28,17 +28,17 @@ class LivroRepositoryTest {
     private AutorRepository autorRepository;
 
     @Test
-    void salvarLivroTeste() {
+     void salvarLivroTeste() {
         Livro livro = new Livro();
-        livro.setIsbn("989889-8990");
-        livro.setPreco(BigDecimal.valueOf(100));
-        livro.setGenero(GeneroLivro.FICCAO);
-        livro.setTitulo("UFO");
+        livro.setIsbn("123-434");
+        livro.setPreco(BigDecimal.valueOf(150));
+        livro.setGenero(GeneroLivro.BIOGRAFIA);
+        livro.setTitulo("Biografia de alguém");
         livro.setDataPublicacao(LocalDate.of(1980, 1, 2));
 
 
-        Autor autor = autorRepository.findById(UUID.fromString("67b9c305-bd4d-4d76-b11b-342de610b0c7")).orElseThrow(() -> new RuntimeException("Erro ao buscar autor para livro!"));
-        livro.setAutor(autor);
+        //Autor autor = autorRepository.findById(UUID.fromString("67b9c305-bd4d-4d76-b11b-342de610b0c7")).orElseThrow(() -> new RuntimeException("Erro ao buscar autor para livro!"));
+        //livro.setAutor(autor);
 
 
         livroRepository.save(livro);
@@ -140,4 +140,23 @@ class LivroRepositoryTest {
 
     }
 
+    @Test
+    public void listarPorGeneroEOrdernarPorParam(){
+        var resultado = livroRepository.findByGenero(GeneroLivro.MISTERIO,"dataPublicacao");
+        resultado.forEach(System.out::println);
+
+    }
+
+
+    @Test
+    public void deletePorGeneroTest(){
+        livroRepository.deleteByGenero(GeneroLivro.CIENCIA);
+    }
+
+
+    @Test
+    public void updateDataPublicacaoTest(){
+        livroRepository.updateDataPublicacao(LocalDate.of(1979,01,02),"UFO");
+    
+    }
 }

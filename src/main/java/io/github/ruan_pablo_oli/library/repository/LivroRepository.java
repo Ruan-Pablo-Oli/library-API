@@ -1,10 +1,14 @@
 package io.github.ruan_pablo_oli.library.repository;
 
 import io.github.ruan_pablo_oli.library.model.Autor;
+import io.github.ruan_pablo_oli.library.model.GeneroLivro;
 import io.github.ruan_pablo_oli.library.model.Livro;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -53,6 +57,30 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
             order by l.genero
             """)
     List<String> listarGenerosAutoresBrasileiros();
+
+
+    //Named parameters
+    @Query("select l from Livro l where l.genero = :genero order by :ordenarPor")
+    List<Livro> findByGenero(@Param("genero") GeneroLivro generoLivro,@Param("ordenarPor") String nomePropriedade);
+
+
+
+    // positional parameters
+    @Query("select l from Livro l where l.genero = ?1 order by ?2")
+    List<Livro> findByGeneroPositionalParam(GeneroLivro generoLivro, String nomePropriedade);
+
+    @Transactional
+    @Modifying
+    @Query("delete from Livro where genero = ?1")
+    void deleteByGenero(GeneroLivro genero);
+
+
+    @Transactional
+    @Modifying
+    @Query("update Livro set dataPublicacao = ?1 where titulo = ?2")
+    void updateDataPublicacao(LocalDate novaData,String titulo);
+
+
 
 
 }
