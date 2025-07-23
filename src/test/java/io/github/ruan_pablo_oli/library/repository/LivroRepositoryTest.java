@@ -157,6 +157,6 @@ class LivroRepositoryTest {
     @Test
     public void updateDataPublicacaoTest(){
         livroRepository.updateDataPublicacao(LocalDate.of(1979,01,02),"UFO");
-    
+
     }
 }
