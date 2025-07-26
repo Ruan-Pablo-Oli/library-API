@@ -5,8 +5,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +20,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString(exclude = {"livros"})
+@EntityListeners(AuditingEntityListener.class) // Class vai ficar escutando toda vez que for alterada na entidade e jogar alteraçoes nas clases com anottaiton @CreateData e @LastModifiedDate1
+
 public class Autor {
 
     @Id
@@ -32,8 +39,19 @@ public class Autor {
     private String nacionalidade;
 
     @OneToMany(mappedBy = "autor",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    //@Transient ignora a propriedade
+    //@Transient // ignora a propriedade
     private List<Livro> livros;
+
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    @Column(name = "id_usuario")
+    private UUID idUsuario;
 
 
 
