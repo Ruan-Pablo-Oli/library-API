@@ -1,11 +1,11 @@
 package io.github.ruan_pablo_oli.library.service;
 
 
-import io.github.ruan_pablo_oli.library.controller.DTO.AutorDTO;
 import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.repository.AutorRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,7 +29,22 @@ public class AutorService {
     }
 
     public void deletarPorId(Autor  autor) {
-        autorRepository.deleteById(autor);
+        autorRepository.delete(autor);
 
+    }
+
+    public List<Autor> pesquisa(String nome,String nacionalidade){
+        if(nome != null && nacionalidade != null){
+            return autorRepository.findByNomeIgnoreCaseContainingAndNacionalidadeIgnoreCaseContaining(nome, nacionalidade);
+        }
+
+        if(nome != null){
+            return autorRepository.findByNomeIgnoreCaseContaining(nome);
+        }
+        if(nacionalidade != null){
+            return autorRepository.findByNacionalidadeIgnoreCaseContaining(nacionalidade);
+        }
+
+        return autorRepository.findAll();
     }
 }
