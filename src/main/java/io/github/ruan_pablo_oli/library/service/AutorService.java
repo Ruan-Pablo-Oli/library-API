@@ -1,9 +1,13 @@
 package io.github.ruan_pablo_oli.library.service;
 
 
+import io.github.ruan_pablo_oli.library.controller.DTO.AutorDTO;
 import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.repository.AutorRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,5 +50,20 @@ public class AutorService {
         }
 
         return autorRepository.findAll();
+    }
+
+    public Autor atualizar(UUID id, AutorDTO autorDTO){
+
+        Optional<Autor> autorOptional = obterPorId(id);
+        if(autorOptional.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        var autor = autorOptional.get();
+        autor.setNome(autorDTO.nome());
+        autor.setNacionalidade(autorDTO.nacionalidade());
+        autor.setDataNascimento(autorDTO.dataNascimento());
+
+        return autorRepository.save(autor);
     }
 }

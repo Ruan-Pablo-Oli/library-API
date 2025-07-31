@@ -68,4 +68,9 @@ public class AutorController {
         return ResponseEntity.ok().body(lista);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Autor> atualizar(@PathVariable String id,@RequestBody AutorDTO dto){
+            return ResponseEntity.ok().body(autorService.atualizar(UUID.fromString(id),dto));
+    }
+
 }
