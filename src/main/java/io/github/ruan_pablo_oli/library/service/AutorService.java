@@ -4,6 +4,7 @@ package io.github.ruan_pablo_oli.library.service;
 import io.github.ruan_pablo_oli.library.controller.DTO.AutorDTO;
 import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.repository.AutorRepository;
+import io.github.ruan_pablo_oli.library.validator.AutorValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,17 @@ public class AutorService {
 
 
     private final AutorRepository autorRepository;
+    private final AutorValidator autorValidator;
 
-    public AutorService(AutorRepository autorRepository){
+    public AutorService(AutorRepository autorRepository,AutorValidator autorValidator){
         this.autorRepository = autorRepository;
+        this.autorValidator = autorValidator;
     }
 
 
     public Autor salvar(Autor autor){
+
+        autorValidator.validar(autor);
         return autorRepository.save(autor);
     }
 
@@ -60,6 +65,7 @@ public class AutorService {
         }
 
         var autor = autorOptional.get();
+        autorValidator.validar(autor);
         autor.setNome(autorDTO.nome());
         autor.setNacionalidade(autorDTO.nacionalidade());
         autor.setDataNascimento(autorDTO.dataNascimento());
