@@ -2,8 +2,10 @@ package io.github.ruan_pablo_oli.library.service;
 
 
 import io.github.ruan_pablo_oli.library.controller.DTO.AutorDTO;
+import io.github.ruan_pablo_oli.library.exceptions.OperacaoNaoPermitidaException;
 import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.repository.AutorRepository;
+import io.github.ruan_pablo_oli.library.repository.LivroRepository;
 import io.github.ruan_pablo_oli.library.validator.AutorValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,12 @@ public class AutorService {
 
     private final AutorRepository autorRepository;
     private final AutorValidator autorValidator;
+    private final LivroRepository livroRepository;
 
-    public AutorService(AutorRepository autorRepository,AutorValidator autorValidator){
+    public AutorService(AutorRepository autorRepository,AutorValidator autorValidator,LivroRepository livroRepository){
         this.autorRepository = autorRepository;
         this.autorValidator = autorValidator;
+        this.livroRepository = livroRepository;
     }
 
 
@@ -38,6 +42,9 @@ public class AutorService {
     }
 
     public void deletarPorId(Autor  autor) {
+        if(possuiLivro(autor)){
+            throw new OperacaoNaoPermitidaException("Autor possui livros cadastrados!");
+        }
         autorRepository.delete(autor);
 
     }
@@ -71,5 +78,9 @@ public class AutorService {
         autor.setDataNascimento(autorDTO.dataNascimento());
 
         return autorRepository.save(autor);
+    }
+
+    public boolean possuiLivro(Autor autor){
+        return livroRepository.existsByAutor(autor);
     }
 }

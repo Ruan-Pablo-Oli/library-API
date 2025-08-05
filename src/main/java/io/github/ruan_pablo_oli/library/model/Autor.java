@@ -38,7 +38,9 @@ public class Autor {
     @Column(name = "nacionalidade",nullable = false,length = 50)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "autor"
+    //        ,cascade = CascadeType.ALL,fetch = FetchType.LAZY
+    )
     //@Transient // ignora a propriedade
     private List<Livro> livros;
 

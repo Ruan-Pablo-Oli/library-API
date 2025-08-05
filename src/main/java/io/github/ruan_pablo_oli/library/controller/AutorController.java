@@ -2,6 +2,7 @@ package io.github.ruan_pablo_oli.library.controller;
 
 import io.github.ruan_pablo_oli.library.controller.DTO.AutorDTO;
 import io.github.ruan_pablo_oli.library.controller.DTO.ErroResposta;
+import io.github.ruan_pablo_oli.library.exceptions.OperacaoNaoPermitidaException;
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.service.AutorService;
@@ -57,13 +58,18 @@ public class AutorController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deletarPorId(@PathVariable String id){
+    public ResponseEntity<Object> deletarPorId(@PathVariable String id){
         var idAutor = UUID.fromString(id);
         Optional<Autor> autor = autorService.obterPorId(idAutor);
         if(autor.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        autorService.deletarPorId(autor.get());
+        try{
+            autorService.deletarPorId(autor.get());
+        }catch (OperacaoNaoPermitidaException e){
+            var erroDTO = ErroResposta.respostaPadrao(2e.getMessage());
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
         return ResponseEntity.noContent().build();
 
     }
@@ -76,8 +82,12 @@ public class AutorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Autor> atualizar(@PathVariable String id,@RequestBody AutorDTO dto){
-            return ResponseEntity.ok().body(autorService.atualizar(UUID.fromString(id),dto));
+    public ResponseEntity<Object> atualizar(@PathVariable String id,@RequestBody AutorDTO dto) {
+        try {
+            return ResponseEntity.ok().body(autorService.atualizar(UUID.fromString(id), dto));
+        } catch (registroDuplicadoException e) {
+            var erroDTO = ErroResposta.conflito(e.getMessage());
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
     }
-
 }
