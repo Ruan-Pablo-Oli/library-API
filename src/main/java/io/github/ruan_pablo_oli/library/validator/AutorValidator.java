@@ -4,18 +4,17 @@ package io.github.ruan_pablo_oli.library.validator;
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.repository.AutorRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class AutorValidator {
 
-    private AutorRepository autorRepository;
+    private final AutorRepository autorRepository;
 
-    public AutorValidator(AutorRepository autorRepository) {
-        this.autorRepository = autorRepository;
-    }
 
     public void validar(Autor autor){
         if(existeAutorCadastrado(autor)){

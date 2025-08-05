@@ -7,6 +7,7 @@ import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.repository.AutorRepository;
 import io.github.ruan_pablo_oli.library.repository.LivroRepository;
 import io.github.ruan_pablo_oli.library.validator.AutorValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,18 +18,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor // Cria um construtor em tempo de execução  dos atributos que tem final
 public class AutorService {
 
 
     private final AutorRepository autorRepository;
     private final AutorValidator autorValidator;
     private final LivroRepository livroRepository;
-
-    public AutorService(AutorRepository autorRepository,AutorValidator autorValidator,LivroRepository livroRepository){
-        this.autorRepository = autorRepository;
-        this.autorValidator = autorValidator;
-        this.livroRepository = livroRepository;
-    }
 
 
     public Autor salvar(Autor autor){

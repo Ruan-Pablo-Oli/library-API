@@ -6,6 +6,7 @@ import io.github.ruan_pablo_oli.library.exceptions.OperacaoNaoPermitidaException
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import io.github.ruan_pablo_oli.library.model.Autor;
 import io.github.ruan_pablo_oli.library.service.AutorService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,14 +19,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("autores")
+@RequiredArgsConstructor
 public class AutorController {
 
 
     private final AutorService autorService;
 
-    public AutorController(AutorService autorService) {
-        this.autorService = autorService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody AutorDTO autorDTO){
@@ -67,7 +66,7 @@ public class AutorController {
         try{
             autorService.deletarPorId(autor.get());
         }catch (OperacaoNaoPermitidaException e){
-            var erroDTO = ErroResposta.respostaPadrao(2e.getMessage());
+            var erroDTO = ErroResposta.respostaPadrao(e.getMessage());
             return ResponseEntity.status(erroDTO.status()).body(erroDTO);
         }
         return ResponseEntity.noContent().build();
