@@ -83,7 +83,7 @@ public class AutorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable String id,@RequestBody AutorDTO dto) {
+    public ResponseEntity<Object> atualizar(@PathVariable String id,@RequestBody  @Valid AutorDTO dto) {
         try {
             return ResponseEntity.ok().body(autorService.atualizar(UUID.fromString(id), dto));
         } catch (registroDuplicadoException e) {
