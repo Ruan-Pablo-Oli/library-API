@@ -11,7 +11,7 @@ public interface AutorMapper {
 
     @Mapping(source = "nome",target = "nome")
     @Mapping(source = "dataNascimento",target = "dataNascimento")
-    @Mapping(source = "nacionalidade",target = "nacionalidade" // É possível mapear propriedades com nomes diferentes
+    @Mapping(source = "nacionalidade",target = "nacionalidade") // É possível mapear propriedades com nomes diferentes
 
     Autor toEntity(AutorDTO dto);
 
