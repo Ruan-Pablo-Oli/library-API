@@ -3,6 +3,7 @@ package io.github.ruan_pablo_oli.library.controller;
 
 import io.github.ruan_pablo_oli.library.controller.DTO.CadastroLivroDTO;
 import io.github.ruan_pablo_oli.library.controller.DTO.ErroResposta;
+import io.github.ruan_pablo_oli.library.controller.DTO.ResultadoPesquisaLivroDTO;
 import io.github.ruan_pablo_oli.library.controller.DTO.mappers.LivroMapper;
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import io.github.ruan_pablo_oli.library.model.Livro;
@@ -12,11 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/livros")
 @RequiredArgsConstructor
-public class LivroController {
+public class LivroController  implements GenericController{
 
     private final LivroService livroService;
     private final LivroMapper livroMapper;
@@ -25,13 +28,19 @@ public class LivroController {
 
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody @Valid CadastroLivroDTO cadastroLivroDTO){
-        try{
-            Livro livro = livroMapper.toEntity(cadastroLivroDTO);
-            livroService.salvar(livro);
-            return ResponseEntity.ok(livro);
-        }catch (registroDuplicadoException e){
-            var erroDTO = ErroResposta.conflito(e.getMessage());
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-        }
+        Livro livro = livroMapper.toEntity(cadastroLivroDTO);
+        livroService.salvar(livro);
+        var url = this.gerarHeaderLocation(livro.getId());
+        return ResponseEntity.created(url).build();
+
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResultadoPesquisaLivroDTO> obterDetalhes(@PathVariable String id){
+        return livroService.obterPorId(UUID.fromString(id)).map(livro -> {
+            var dto = livroMapper.toDTO(livro);
+            return ResponseEntity.ok(dto);
+        }).orElseGet( () -> ResponseEntity.notFound().build());
+
     }
 }

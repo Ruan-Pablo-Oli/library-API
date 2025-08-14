@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("autores")
 @RequiredArgsConstructor
-public class AutorController {
+public class AutorController implements GenericController {
 
 
     private final AutorService autorService;
@@ -31,28 +31,19 @@ public class AutorController {
 
     //@Valid já valida usando o validation
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO autorDTO){
-      try {
-          Autor autor = autorMapper.toEntity(autorDTO);
-          autorService.salvar(autor);
-          URI location = ServletUriComponentsBuilder
-                  .fromCurrentRequest()
-                  .path("/{id}")
-                  .buildAndExpand(autor.getId())
-                  .toUri();
+    public ResponseEntity<Void> salvar(@RequestBody @Valid AutorDTO autorDTO) {
+        Autor autor = autorMapper.toEntity(autorDTO);
+        autorService.salvar(autor);
+        URI location = this.gerarHeaderLocation(autor.getId());
 
-          return ResponseEntity.created(location).build();
-      }catch ( registroDuplicadoException e){
-          var erroDTO = ErroResposta.conflito(e.getMessage());
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-      }
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id){
+    public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id) {
         var idAutor = UUID.fromString(id);
 
-        return autorService.obterPorId(idAutor).map( autor -> {
+        return autorService.obterPorId(idAutor).map(autor -> {
             AutorDTO dto = autorMapper.toDTO(autor);
             return ResponseEntity.ok(dto);
         }).orElseGet(() -> ResponseEntity.notFound().build());
@@ -60,36 +51,26 @@ public class AutorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarPorId(@PathVariable String id){
+    public ResponseEntity<Void> deletarPorId(@PathVariable String id) {
         var idAutor = UUID.fromString(id);
         Optional<Autor> autor = autorService.obterPorId(idAutor);
-        if(autor.isEmpty()){
+        if (autor.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        try{
-            autorService.deletarPorId(autor.get());
-        }catch (OperacaoNaoPermitidaException e){
-            var erroDTO = ErroResposta.respostaPadrao(e.getMessage());
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-        }
+        autorService.deletarPorId(autor.get());
         return ResponseEntity.noContent().build();
 
     }
 
     @GetMapping
-    public ResponseEntity<List<AutorDTO>> pesquisar(@RequestParam(value = "nome",required = false) String nome, @RequestParam(value = "nacionalidade",required = false) String nacionalidade){
+    public ResponseEntity<List<AutorDTO>> pesquisar(@RequestParam(value = "nome", required = false) String nome, @RequestParam(value = "nacionalidade", required = false) String nacionalidade) {
         List<Autor> resultado = autorService.pesquisaByExample(nome, nacionalidade);
         List<AutorDTO> lista = resultado.stream().map(autorMapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok().body(lista);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable String id,@RequestBody  @Valid AutorDTO dto) {
-        try {
-            return ResponseEntity.ok().body(autorService.atualizar(UUID.fromString(id), dto));
-        } catch (registroDuplicadoException e) {
-            var erroDTO = ErroResposta.conflito(e.getMessage());
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-        }
+    public ResponseEntity<Object> atualizar(@PathVariable String id, @RequestBody @Valid AutorDTO dto) {
+        return ResponseEntity.ok().body(autorService.atualizar(UUID.fromString(id), dto));
     }
 }

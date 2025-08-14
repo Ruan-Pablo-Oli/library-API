@@ -2,6 +2,8 @@ package io.github.ruan_pablo_oli.library.controller.common;
 
 import io.github.ruan_pablo_oli.library.controller.DTO.ErroCampo;
 import io.github.ruan_pablo_oli.library.controller.DTO.ErroResposta;
+import io.github.ruan_pablo_oli.library.exceptions.OperacaoNaoPermitidaException;
+import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,5 +26,25 @@ public class GlobalExceptionHandler {
         List<ErroCampo> listaErros = fieldErrors.stream().map(fe -> new ErroCampo(fe.getField(),fe.getDefaultMessage())).collect(Collectors.toList());
 
         return new ErroResposta(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validaçaão",listaErros);
+    }
+
+    @ExceptionHandler(registroDuplicadoException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErroResposta handleRegistroDuplicadoException(registroDuplicadoException e){
+        return ErroResposta.conflito(e.getMessage());
+    }
+
+    @ExceptionHandler(OperacaoNaoPermitidaException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroResposta handleOperacaoNaoPermitida(OperacaoNaoPermitidaException e){
+        return ErroResposta.respostaPadrao(e.getMessage());
+    }
+
+
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErroResposta handleErroSNaoTratados(RuntimeException e){
+        return new ErroResposta(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro inesperado. Entre em contato com a administração",List.of());
     }
 }
