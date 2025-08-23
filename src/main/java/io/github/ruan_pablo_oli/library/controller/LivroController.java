@@ -6,6 +6,7 @@ import io.github.ruan_pablo_oli.library.controller.DTO.ErroResposta;
 import io.github.ruan_pablo_oli.library.controller.DTO.ResultadoPesquisaLivroDTO;
 import io.github.ruan_pablo_oli.library.controller.DTO.mappers.LivroMapper;
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
+import io.github.ruan_pablo_oli.library.model.GeneroLivro;
 import io.github.ruan_pablo_oli.library.model.Livro;
 import io.github.ruan_pablo_oli.library.service.LivroService;
 import jakarta.validation.Valid;
@@ -13,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -54,4 +57,17 @@ public class LivroController  implements GenericController{
                 }
         ).orElseGet( () -> ResponseEntity.noContent().build());
     }
+
+    @GetMapping
+    public ResponseEntity<List<ResultadoPesquisaLivroDTO>> pesquisa(@RequestParam(value="isbn",required = false) String isbn, @RequestParam(value="titulo",required = false) String titulo,
+                                                                    @RequestParam(value="nome-autor",required = false) String nomeAutor,
+                                                                    @RequestParam(value="genero",required = false) GeneroLivro genero,
+                                                                    @RequestParam(value="ano-publicacao",required = false) Integer anoPublicacao
+                                                                    ){
+        var resultado = livroService.pesquisa(isbn, titulo, nomeAutor, genero, anoPublicacao);
+        var lista = resultado.stream().map(livroMapper::toDTO).collect(Collectors.toList());
+
+        return ResponseEntity.ok(lista);
+    }
+
 }
