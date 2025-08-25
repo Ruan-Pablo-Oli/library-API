@@ -1,6 +1,7 @@
 package io.github.ruan_pablo_oli.library.validator;
 
 
+import io.github.ruan_pablo_oli.library.exceptions.CampoInvalidoException;
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import io.github.ruan_pablo_oli.library.model.Livro;
 import io.github.ruan_pablo_oli.library.repository.LivroRepository;
@@ -13,13 +14,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LivroValidator {
     private final LivroRepository livroRepository;
-
+    private static final int ANO_EXIGENCIA_PRECO = 2020;
 
     public void validar(Livro livro){
 
         if(existeLivroComIsbn(livro)){
             throw  new registroDuplicadoException("ISBN já cadastrado!");
         }
+
+        if(isPrecoObrigatorioNulo(livro)){
+            throw new CampoInvalidoException("preço", "Para livros com ano de publicação a partir de 2020 o preço é obrigatório");
+        }
+    }
+
+    private boolean isPrecoObrigatorioNulo( Livro livro){
+        return livro.getPreco() == null && livro.getDataPublicacao().getYear() >= ANO_EXIGENCIA_PRECO;
     }
 
     private boolean existeLivroComIsbn(Livro livro){
