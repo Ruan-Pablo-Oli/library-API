@@ -5,6 +5,7 @@ import io.github.ruan_pablo_oli.library.model.GeneroLivro;
 import io.github.ruan_pablo_oli.library.model.Livro;
 import io.github.ruan_pablo_oli.library.repository.LivroRepository;
 import io.github.ruan_pablo_oli.library.repository.specs.LivroSpecs;
+import io.github.ruan_pablo_oli.library.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LivroService {
     private final LivroRepository livroRepository;
-
+    private final LivroValidator livroValidator;
 
     public Livro salvar(Livro livro) {
+        livroValidator.validar(livro);
         return livroRepository.save(livro);
     }
 
@@ -69,6 +71,7 @@ public class LivroService {
             throw new IllegalArgumentException("Para atualizar, é necessário que o livro já esteja na base de dados!");
         }
 
+        livroValidator.validar(livro);
         livroRepository.save(livro);
     }
 }
