@@ -7,6 +7,9 @@ import io.github.ruan_pablo_oli.library.repository.LivroRepository;
 import io.github.ruan_pablo_oli.library.repository.specs.LivroSpecs;
 import io.github.ruan_pablo_oli.library.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +39,7 @@ public class LivroService {
     }
 
 
-    public List<Livro> pesquisa(String isbn, String titulo,String nomeAutor, GeneroLivro genero, Integer anoPublicacao){
+    public Page<Livro> pesquisa(String isbn, String titulo, String nomeAutor, GeneroLivro genero, Integer anoPublicacao,Integer pagina, Integer tamanhoPagina){
 
         // Select * from livro where isbn = :isbn and nomeAutor = :nomeAutor
 //        Specification<Livro> specs = Specification.where(LivroSpecs.isbnEqual(isbn)).and(LivroSpecs.tituloLike(titulo)).and(LivroSpecs.generoEqual(genero));
@@ -63,7 +66,9 @@ public class LivroService {
             specs = specs.and(LivroSpecs.nomeAutorLike(nomeAutor));
         }
 
-        return livroRepository.findAll(specs);
+        Pageable pagerequest=  PageRequest.of(pagina,tamanhoPagina);
+
+        return livroRepository.findAll(specs,pagerequest);
     }
 
     public void atualizar(Livro livro) {
