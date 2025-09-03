@@ -3,8 +3,10 @@ package io.github.ruan_pablo_oli.library.service;
 
 import io.github.ruan_pablo_oli.library.model.GeneroLivro;
 import io.github.ruan_pablo_oli.library.model.Livro;
+import io.github.ruan_pablo_oli.library.model.Usuario;
 import io.github.ruan_pablo_oli.library.repository.LivroRepository;
 import io.github.ruan_pablo_oli.library.repository.specs.LivroSpecs;
+import io.github.ruan_pablo_oli.library.security.SecurityService;
 import io.github.ruan_pablo_oli.library.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,9 +25,12 @@ import java.util.UUID;
 public class LivroService {
     private final LivroRepository livroRepository;
     private final LivroValidator livroValidator;
+    private final SecurityService securityService;
 
     public Livro salvar(Livro livro) {
         livroValidator.validar(livro);
+        Usuario usuarioLogado = securityService.obterUsuarioLogado();
+        livro.setUsuario(usuarioLogado);
         return livroRepository.save(livro);
     }
 

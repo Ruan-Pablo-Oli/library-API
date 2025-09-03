@@ -4,8 +4,10 @@ package io.github.ruan_pablo_oli.library.service;
 import io.github.ruan_pablo_oli.library.controller.DTO.AutorDTO;
 import io.github.ruan_pablo_oli.library.exceptions.OperacaoNaoPermitidaException;
 import io.github.ruan_pablo_oli.library.model.Autor;
+import io.github.ruan_pablo_oli.library.model.Usuario;
 import io.github.ruan_pablo_oli.library.repository.AutorRepository;
 import io.github.ruan_pablo_oli.library.repository.LivroRepository;
+import io.github.ruan_pablo_oli.library.security.SecurityService;
 import io.github.ruan_pablo_oli.library.validator.AutorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -27,11 +29,13 @@ public class AutorService {
     private final AutorRepository autorRepository;
     private final AutorValidator autorValidator;
     private final LivroRepository livroRepository;
-
+    private final SecurityService securityService;
 
     public Autor salvar(Autor autor){
 
+        Usuario usuario = securityService.obterUsuarioLogado();
         autorValidator.validar(autor);
+        autor.setUsuario(usuario);
         return autorRepository.save(autor);
     }
 

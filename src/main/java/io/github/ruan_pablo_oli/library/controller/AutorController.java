@@ -6,11 +6,16 @@ import io.github.ruan_pablo_oli.library.controller.DTO.mappers.AutorMapper;
 import io.github.ruan_pablo_oli.library.exceptions.OperacaoNaoPermitidaException;
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import io.github.ruan_pablo_oli.library.model.Autor;
+import io.github.ruan_pablo_oli.library.model.Usuario;
+import io.github.ruan_pablo_oli.library.security.SecurityService;
 import io.github.ruan_pablo_oli.library.service.AutorService;
+import io.github.ruan_pablo_oli.library.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -34,6 +39,7 @@ public class AutorController implements GenericController {
     @PostMapping
     @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> salvar(@RequestBody @Valid AutorDTO autorDTO) {
+
         Autor autor = autorMapper.toEntity(autorDTO);
         autorService.salvar(autor);
         URI location = this.gerarHeaderLocation(autor.getId());
@@ -44,6 +50,7 @@ public class AutorController implements GenericController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OPERADOR','GERENTE')")
     public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id) {
+
         var idAutor = UUID.fromString(id);
 
         return autorService.obterPorId(idAutor).map(autor -> {
