@@ -29,7 +29,8 @@ public class SecurityConfiguration {
                 })
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizer ->{
-                    authorizer.requestMatchers("/login").permitAll();
+                    authorizer.requestMatchers("/login/**").permitAll();1
+                    authorizer.requestMatchers(HttpMethod.POST,"/usuarios/**").permitAll();
 //                    authorizer.requestMatchers( HttpMethod.POST,"/autores/**").hasRole("ADMIN");
 //                    authorizer.requestMatchers(HttpMethod.PUT,"/autores/**").hasRole("ADMIN");
 //                    authorizer.requestMatchers(HttpMethod.DELETE,"/autores/**").hasRole("ADMIN");
