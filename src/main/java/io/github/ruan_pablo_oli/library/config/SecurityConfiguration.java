@@ -1,10 +1,13 @@
 package io.github.ruan_pablo_oli.library.config;
 
 
+import io.github.ruan_pablo_oli.library.security.CustomUserDetailsService;
+import io.github.ruan_pablo_oli.library.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,6 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true,jsr250Enabled = true)
 public class SecurityConfiguration {
 
 
@@ -29,14 +33,14 @@ public class SecurityConfiguration {
                 })
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizer ->{
-                    authorizer.requestMatchers("/login/**").permitAll();1
+                    authorizer.requestMatchers("/login/**").permitAll();
                     authorizer.requestMatchers(HttpMethod.POST,"/usuarios/**").permitAll();
 //                    authorizer.requestMatchers( HttpMethod.POST,"/autores/**").hasRole("ADMIN");
 //                    authorizer.requestMatchers(HttpMethod.PUT,"/autores/**").hasRole("ADMIN");
 //                    authorizer.requestMatchers(HttpMethod.DELETE,"/autores/**").hasRole("ADMIN");
 //                    authorizer.requestMatchers(HttpMethod.GET,"/autores/**").hasAnyRole("ADMIN");
-                    authorizer.requestMatchers("/autores/**").hasRole("ADMIN");
-                    authorizer.requestMatchers("/livros/**").hasAnyRole("USER","ADMIN");
+//                    authorizer.requestMatchers("/autores/**").hasRole("ADMIN");
+//                    authorizer.requestMatchers("/livros/**").hasAnyRole("USER","ADMIN");
                     authorizer.anyRequest().authenticated();
                 })
                 .build();
@@ -49,11 +53,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder){
-        UserDetails user1 = User.builder().username("usuario").password(encoder.encode("123")).roles("USER").build();
-        UserDetails user2 = User.builder().username("admin").password(encoder.encode("321")).roles("ADMIN").build();
+    public UserDetailsService userDetailsService(UsuarioService usuarioService){
 
-
-        return new InMemoryUserDetailsManager(user1,user2);
+        return new CustomUserDetailsService(usuarioService);
     }
 }

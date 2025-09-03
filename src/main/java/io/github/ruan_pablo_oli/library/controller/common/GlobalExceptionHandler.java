@@ -6,6 +6,7 @@ import io.github.ruan_pablo_oli.library.exceptions.CampoInvalidoException;
 import io.github.ruan_pablo_oli.library.exceptions.OperacaoNaoPermitidaException;
 import io.github.ruan_pablo_oli.library.exceptions.registroDuplicadoException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,10 +49,18 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErroResposta handleAccessDeniedException(AccessDeniedException e){
+        return new ErroResposta(HttpStatus.FORBIDDEN.value(), "Acesso negado",List.of());
+    }
+
+
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErroResposta handleErroSNaoTratados(RuntimeException e){
         return new ErroResposta(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro inesperado. Entre em contato com a administração",List.of());
     }
+
 }
