@@ -28,9 +28,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable)
-                .formLogin(configurer -> {
-                    configurer.loginPage("/login");
-                })
+//                .formLogin(configurer -> {
+//                    configurer.loginPage("/login");
+//                })
+                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizer ->{
                     authorizer.requestMatchers("/login/**").permitAll();
@@ -43,6 +44,7 @@ public class SecurityConfiguration {
 //                    authorizer.requestMatchers("/livros/**").hasAnyRole("USER","ADMIN");
                     authorizer.anyRequest().authenticated();
                 })
+                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
 
