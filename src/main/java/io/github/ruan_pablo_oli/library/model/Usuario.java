@@ -21,8 +21,10 @@ public class Usuario {
 
 
     @Column
-    private String login;
+    private String email;
 
+    @Column
+    private String login;
 
     @Column
     private String senha;
