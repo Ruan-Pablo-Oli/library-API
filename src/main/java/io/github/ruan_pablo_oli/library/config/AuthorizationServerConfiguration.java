@@ -124,7 +124,7 @@ public class AuthorizationServerConfiguration {
                 .jwkSetEndpoint("/oauth2/jwks")
                //logout
                 .oidcLogoutEndpoint("/oauth2/logout")
-                
+
                 .build();
     }
 

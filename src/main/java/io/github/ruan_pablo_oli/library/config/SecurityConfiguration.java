@@ -2,6 +2,7 @@ package io.github.ruan_pablo_oli.library.config;
 
 
 import io.github.ruan_pablo_oli.library.security.CustomUserDetailsService;
+import io.github.ruan_pablo_oli.library.security.JwtCustomAuthenticationFilter;
 import io.github.ruan_pablo_oli.library.security.LoginSocialSucessHandler;
 import io.github.ruan_pablo_oli.library.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -30,7 +32,7 @@ public class SecurityConfiguration {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSucessHandler sucessHandler) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSucessHandler sucessHandler, JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable)
               .formLogin(configurer -> {
                    configurer.loginPage("/login");
@@ -53,6 +55,7 @@ public class SecurityConfiguration {
                             .successHandler(sucessHandler);
                 })
                 .oauth2ResourceServer(oauath2Rs -> oauath2Rs.jwt(Customizer.withDefaults()))
+                .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
     }
 
