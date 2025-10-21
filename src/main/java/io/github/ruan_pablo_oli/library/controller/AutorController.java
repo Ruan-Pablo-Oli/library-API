@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @RequestMapping("autores")
 @RequiredArgsConstructor
 @Tag(name = "Autores")
+@Slf4j
 public class AutorController implements GenericController {
 
 
@@ -53,6 +55,7 @@ public class AutorController implements GenericController {
     )
     public ResponseEntity<Void> salvar(@RequestBody @Valid AutorDTO autorDTO) {
 
+        log.info("Cadastrando novo autor: {}", autorDTO.nome());
         Autor autor = autorMapper.toEntity(autorDTO);
         autorService.salvar(autor);
         URI location = this.gerarHeaderLocation(autor.getId());
@@ -92,6 +95,7 @@ public class AutorController implements GenericController {
             }
     )
     public ResponseEntity<Void> deletarPorId(@PathVariable String id) {
+        log.info("Deletando autor de ID: {}",id);
         var idAutor = UUID.fromString(id);
         Optional<Autor> autor = autorService.obterPorId(idAutor);
         if (autor.isEmpty()) {
